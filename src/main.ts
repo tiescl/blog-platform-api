@@ -1,14 +1,19 @@
-import { app } from "@/app";
+import { app } from "./app";
+import { Logger } from "./shared/libs";
+import { db } from "./database/data-source";
 
-const PORT = process.env.PORT || 9100;
+const PORT = process.env.NODE_PORT || 9100;
 
 async function main() {
+    await db.init();
+    await db.onAppInit();
+
     app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:9100`);
+        Logger.info(`Server is running on http://localhost:${PORT}`);
     });
 }
 
-main().catch((error) => {
-    console.log(error);
+main().catch((err) => {
+    Logger.error(err);
     process.exit(1);
 });
