@@ -6,6 +6,7 @@ import {
     errorMiddleware,
     loggerMiddleware
 } from "./shared/middlewares";
+import { db } from "database/data-source";
 
 export const app = express();
 
@@ -22,10 +23,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware);
 
-app.get("/", (_req: Request, res: Response) => {
-    res.status(200).json({
-        message: new Date().toISOString()
-    });
+app.get("/", async (_req: Request, res: Response) => {
+    const now = await db.manager.query("SELECT NOW()");
+
+    res.status(200).json(now[0]);
 });
 
 // ==== Routes ==== //

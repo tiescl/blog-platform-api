@@ -3,9 +3,11 @@ import { DataSource } from "typeorm";
 class DbClient {
     public readonly connection = new DataSource({
         type: "postgres",
-        host: `${process.env.DB_HOST}`,
-        database: `${process.env.DB_NAME}`,
-        port: 5432,
+        host: process.env.DB_HOST,
+        username: process.env.DB_USER,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: Number(process.env.DB_PORT) || 5432,
         logging: false,
         entities: []
     });
@@ -20,7 +22,7 @@ class DbClient {
         const queryRunner = this.connection.createQueryRunner();
 
         const CREATE_USER_TABLE_QUERY = `
-            CREATE TABLE IF NOT EXISTS User (
+            CREATE TABLE IF NOT EXISTS users (
                 user_id UUID PRIMARY KEY,
                 user_username VARCHAR(255) UNIQUE NOT NULL,
                 user_password VARCHAR(255) NOT NULL

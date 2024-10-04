@@ -9,7 +9,7 @@ async function main() {
     await db.onAppInit();
 
     app.listen(PORT, () => {
-        Logger.info(`Server is running on http://localhost:${PORT}`);
+        Logger.info(`Server listening on http://localhost:${PORT}`);
     });
 }
 
