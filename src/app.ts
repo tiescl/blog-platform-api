@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { ErrorRequestHandler, Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
 import {
@@ -7,6 +7,7 @@ import {
     loggerMiddleware
 } from "./shared/middlewares";
 import { db } from "database/data-source";
+import { AuthController } from "modules/auth/auth.controller";
 
 export const app = express();
 
@@ -28,7 +29,8 @@ app.get("/", async (_req: Request, res: Response) => {
 
     res.status(200).json(now[0]);
 });
+app.use("/auth", AuthController);
 
 // ==== Routes ==== //
 app.use(notFoundMiddleware);
-app.use(errorMiddleware);
+app.use(errorMiddleware as ErrorRequestHandler);
