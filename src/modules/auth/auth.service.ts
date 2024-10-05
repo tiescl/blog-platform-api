@@ -1,14 +1,31 @@
 import { LoginDto, SignupDto } from "./dto";
 import { User } from "shared/entities/User.entity";
+import { AuthenticationError, ServerError } from "shared/errors";
+import { UsersService } from "modules/users/users.service";
+import { CreateUserDto } from "modules/users/users.types";
 import { TOKEN_EXPIRATION_TIME } from "./auth.constants";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { AuthenticationError, ServerError } from "shared/errors";
-import { UsersService } from "modules/users/users.service";
-import { CreateUserDto } from "modules/users/users.types";
 
 export class AuthService {
+    static async login(userCredentials: LoginDto): Promise<string> {
+        const { email, password } = userCredentials;
+
+        const user = await UsersService.getUserByEmail(email);
+
+        const isPasswordValid = await this.verifyPassword(
+            password,
+            user.password
+        );
+
+        if (isPasswordValid) {
+            return this.generateToken(user.id);
+        }
+
+        throw new AuthenticationError("Invalid Password");
+    }
+
     static async signup(
         userCredentials: SignupDto
     ): Promise<{ user: User; token: string }> {
@@ -26,23 +43,6 @@ export class AuthService {
         const token = this.generateToken(newUser.id);
 
         return { user, token };
-    }
-
-    static async login(userCredentials: LoginDto): Promise<string> {
-        const { email, password } = userCredentials;
-
-        const user = await UsersService.getUserByEmail(email);
-
-        const isPasswordValid = await this.verifyPassword(
-            password,
-            user.password
-        );
-
-        if (isPasswordValid) {
-            return this.generateToken(user.id);
-        }
-
-        throw new AuthenticationError("Invalid Password");
     }
 
     private static async hashPassword(password: string) {

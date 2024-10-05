@@ -12,7 +12,7 @@ export class UsersRepository {
             INSERT INTO users
                 (id, username, email, password, role)
             VALUES
-                (?, ?, ?, ?, ?)
+                ($1, $2, $3, $4, $5)
             RETURNING *
         `,
             [id, username, email, password, role]
@@ -27,14 +27,12 @@ export class UsersRepository {
 
     static async getUser(
         param: string,
-        byEmail: boolean = false
+        column: "email" | "id" = "id"
     ): Promise<User> {
-        const column = byEmail ? "email" : "id";
-
         const result = await db.manager.query(
             `
             SELECT * FROM users
-            WHERE ${column} = ?
+            WHERE ${column} = $1
         `,
             [param]
         );
@@ -44,5 +42,19 @@ export class UsersRepository {
         }
 
         return result[0];
+    }
+
+    static async userExists(param: string): Promise<boolean> {
+        try {
+            await this.getUser(param, "email");
+
+            return true;
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                return false;
+            }
+
+            throw error;
+        }
     }
 }

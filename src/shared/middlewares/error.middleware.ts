@@ -1,5 +1,5 @@
 import { Logger } from "shared/libs";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
     AuthenticationError,
     DatabaseError,
@@ -7,9 +7,10 @@ import {
 } from "shared/errors";
 
 export function errorMiddleware(
-    err: unknown,
+    err: Error,
     _req: Request,
-    res: Response
+    res: Response,
+    _next: NextFunction
 ) {
     Logger.error(`[${new Date().toISOString()}] ${err}`);
 
