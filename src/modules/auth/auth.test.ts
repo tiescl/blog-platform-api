@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "app";
 import { UsersService } from "modules/users/users.service";
-import { User } from "shared/entities/User.entity";
+import { User } from "shared/entities";
 import { AuthenticationError } from "shared/errors";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcryptjs";

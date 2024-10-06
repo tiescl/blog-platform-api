@@ -1,5 +1,5 @@
 import { LoginDto, SignupDto } from "./dto";
-import { User } from "shared/entities/User.entity";
+import { User } from "shared/entities";
 import { AuthenticationError, ServerError } from "shared/errors";
 import { UsersService } from "modules/users/users.service";
 import { CreateUserDto } from "modules/users/users.types";

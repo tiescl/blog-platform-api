@@ -1,3 +1,3 @@
-import { User } from "shared/entities/User.entity";
+import { User } from "shared/entities";
 
 export type CreateUserDto = Omit<User, "created_at">;

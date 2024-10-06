@@ -1,5 +1,5 @@
 import { db } from "database/data-source";
-import { User } from "shared/entities/User.entity";
+import { User } from "shared/entities";
 import { DatabaseError, NotFoundError } from "shared/errors";
 import { CreateUserDto } from "./users.types";
 
