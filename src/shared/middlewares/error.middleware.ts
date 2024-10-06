@@ -3,7 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import {
     AuthenticationError,
     DatabaseError,
-    NotFoundError
+    NotFoundError,
+    ServerError
 } from "shared/errors";
 
 export function errorMiddleware(
@@ -26,7 +27,7 @@ export function errorMiddleware(
         });
     }
 
-    if (err instanceof DatabaseError) {
+    if (err instanceof DatabaseError || err instanceof ServerError) {
         return res.status(500).json({
             message: err.message
         });
