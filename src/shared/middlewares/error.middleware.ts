@@ -1,11 +1,5 @@
 import { Logger } from "shared/libs";
 import { NextFunction, Request, Response } from "express";
-import {
-    AuthenticationError,
-    DatabaseError,
-    NotFoundError,
-    ServerError
-} from "shared/errors";
 
 export function errorMiddleware(
     err: Error,
@@ -15,19 +9,19 @@ export function errorMiddleware(
 ) {
     Logger.error(`[${new Date().toISOString()}] ${err}`);
 
-    if (err instanceof AuthenticationError) {
+    if (err.name == "AuthenticationError") {
         return res.status(401).json({
             message: err.message
         });
     }
 
-    if (err instanceof NotFoundError) {
+    if (err.name == "NotFoundError") {
         return res.status(404).json({
             message: err.message
         });
     }
 
-    if (err instanceof DatabaseError || err instanceof ServerError) {
+    if (err.name == "DatabaseError" || err.name == "ServerError") {
         return res.status(500).json({
             message: err.message
         });

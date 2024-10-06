@@ -8,9 +8,7 @@ import bcrypt from "bcryptjs";
 
 jest.mock("modules/users/users.service");
 
-const mockedUsersService = UsersService as jest.Mocked<
-    typeof UsersService
->;
+const mockUsersService = UsersService as jest.Mocked<typeof UsersService>;
 
 describe("User Auth", () => {
     beforeEach(() => {
@@ -18,7 +16,7 @@ describe("User Auth", () => {
     });
 
     describe("POST /auth/signup", () => {
-        it("should register a user", async () => {
+        test("should register a user", async () => {
             const newUser: User = {
                 id: uuid(),
                 username: "qwerty-dvorak",
@@ -27,9 +25,8 @@ describe("User Auth", () => {
                 role: "user",
                 created_at: new Date().toISOString()
             };
-            // 291
 
-            mockedUsersService.createUser.mockResolvedValueOnce(newUser);
+            mockUsersService.createUser.mockResolvedValueOnce(newUser);
 
             const response = await request(app).post("/auth/signup").send({
                 username: "qwerty-dvorak",
@@ -40,7 +37,7 @@ describe("User Auth", () => {
             expect(response.status).toEqual(201);
             expect(response.body.user).toEqual(newUser);
             expect(response.body.token).toBeDefined();
-            expect(mockedUsersService.createUser).toHaveBeenCalledWith(
+            expect(mockUsersService.createUser).toHaveBeenCalledWith(
                 expect.objectContaining({
                     id: expect.any(String),
                     username: "qwerty-dvorak",
@@ -51,14 +48,14 @@ describe("User Auth", () => {
             );
         });
 
-        it("should return 401 for existing user", async () => {
+        test("should return 401 for existing user", async () => {
             const existingUser = {
                 username: "qwerty-dvorak",
                 email: "qwerty@example.com",
                 password: "qwerty123"
             };
 
-            mockedUsersService.createUser.mockRejectedValueOnce(
+            mockUsersService.createUser.mockRejectedValueOnce(
                 new AuthenticationError("Invalid email")
             );
 
@@ -72,7 +69,7 @@ describe("User Auth", () => {
     });
 
     describe("POST /auth/login", () => {
-        it("should log the user in", async () => {
+        test("should log the user in", async () => {
             const userCredentials = {
                 email: "qwerty@example.com",
                 password: "qwerty123"
@@ -87,7 +84,7 @@ describe("User Auth", () => {
                 created_at: new Date().toISOString()
             };
 
-            mockedUsersService.getUserByEmail.mockResolvedValueOnce(
+            mockUsersService.getUserByEmail.mockResolvedValueOnce(
                 mockUser
             );
 
@@ -97,12 +94,12 @@ describe("User Auth", () => {
 
             expect(response.status).toBe(200);
             expect(response.body.token).toBeDefined();
-            expect(mockedUsersService.getUserByEmail).toHaveBeenCalledWith(
+            expect(mockUsersService.getUserByEmail).toHaveBeenCalledWith(
                 userCredentials.email
             );
         });
 
-        it("should return 401 for invalid credentials", async () => {
+        test("should return 401 for invalid credentials", async () => {
             const userCredentials = {
                 email: "qwerty@example.com",
                 password: "wrongpassword"
@@ -117,7 +114,7 @@ describe("User Auth", () => {
                 created_at: new Date().toISOString()
             };
 
-            mockedUsersService.getUserByEmail.mockResolvedValueOnce(
+            mockUsersService.getUserByEmail.mockResolvedValueOnce(
                 mockUser
             );
 
