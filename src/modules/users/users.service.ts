@@ -1,4 +1,4 @@
-import { AuthenticationError } from "shared/errors";
+import { BadRequestError } from "shared/errors";
 import { UsersRepository } from "./users.repository";
 import { CreateUserDto } from "./users.types";
 
@@ -9,7 +9,7 @@ export class UsersService {
         );
 
         if (userExists) {
-            throw new AuthenticationError("Invalid email");
+            throw new BadRequestError("Invalid email");
         }
 
         return UsersRepository.createUser(userCredentials);

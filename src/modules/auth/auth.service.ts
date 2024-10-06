@@ -1,6 +1,6 @@
 import { LoginDto, SignupDto } from "./dto";
 import { User } from "shared/entities";
-import { AuthenticationError, ServerError } from "shared/errors";
+import { BadRequestError, ServerError } from "shared/errors";
 import { UsersService } from "modules/users/users.service";
 import { CreateUserDto } from "modules/users/users.types";
 import { TOKEN_EXPIRATION_TIME } from "./auth.constants";
@@ -23,7 +23,7 @@ export class AuthService {
             return this.generateToken(user.id);
         }
 
-        throw new AuthenticationError("Invalid Password");
+        throw new BadRequestError("Invalid Password");
     }
 
     static async signup(
