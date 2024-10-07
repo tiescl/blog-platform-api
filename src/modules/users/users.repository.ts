@@ -1,10 +1,10 @@
 import { db } from "database/data-source";
 import { User } from "shared/entities";
 import { DatabaseError, NotFoundError } from "shared/errors";
-import { CreateUserDto } from "./users.types";
+import { UsersCreateDto } from "./users.types";
 
 export class UsersRepository {
-    static async createUser(user: CreateUserDto): Promise<User> {
+    static async createUser(user: UsersCreateDto): Promise<User> {
         const { id, username, email, password, role } = user;
 
         const result = await db.manager.query(
@@ -44,7 +44,7 @@ export class UsersRepository {
         return result[0];
     }
 
-    static async userExists(param: string): Promise<boolean> {
+    static async doesUserExist(param: string): Promise<boolean> {
         try {
             await this.getUser(param, "email");
 

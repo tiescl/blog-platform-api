@@ -43,14 +43,14 @@ class DbClient {
         `;
 
         const UPDATE_MODIFIED_TRIGGER = `
-            CREATE OR REPLACE TRIGGER update_blog_modtime
-            BEFORE UPDATE ON blogs
+            CREATE OR REPLACE TRIGGER update_post_modtime
+            BEFORE UPDATE ON posts
             FOR EACH ROW
             EXECUTE FUNCTION update_modified_column();
         `;
 
-        const CREATE_BLOG_TABLE_QUERY = `
-            CREATE TABLE IF NOT EXISTS blogs (
+        const CREATE_POST_TABLE_QUERY = `
+            CREATE TABLE IF NOT EXISTS posts (
                 id UUID PRIMARY KEY,
                 author_id UUID REFERENCES users(id),
                 title VARCHAR(255) NOT NULL,
@@ -64,7 +64,7 @@ class DbClient {
         try {
             await queryRunner.query(UPDATE_MODIFIED_FUNCTION);
             await queryRunner.query(CREATE_USER_TABLE_QUERY);
-            await queryRunner.query(CREATE_BLOG_TABLE_QUERY);
+            await queryRunner.query(CREATE_POST_TABLE_QUERY);
             await queryRunner.query(UPDATE_MODIFIED_TRIGGER);
         } catch (error) {
             throw new DatabaseError(`Table creation failed: ${error}`);
