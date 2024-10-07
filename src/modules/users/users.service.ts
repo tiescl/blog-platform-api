@@ -4,11 +4,11 @@ import { UsersCreateDto } from "./users.types";
 
 export class UsersService {
     static async createUser(userCredentials: UsersCreateDto) {
-        const doesUserExist = await UsersRepository.doesUserExist(
+        const user = await UsersService.getUserByEmail(
             userCredentials.email
         );
 
-        if (doesUserExist) {
+        if (user) {
             throw new BadRequestError("Invalid email");
         }
 
