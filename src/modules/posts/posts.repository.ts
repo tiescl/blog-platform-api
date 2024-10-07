@@ -63,4 +63,21 @@ export class PostsRepository {
 
         return result[0];
     }
+
+    static async deletePost(postId: string) {
+        const result = await db.manager.query(
+            `
+            DELETE FROM posts
+            WHERE id = $1
+            RETURNING *
+            `,
+            [postId]
+        );
+
+        if (!result[0]) {
+            throw new DatabaseError("Errors connecting to the database");
+        }
+
+        return result[0];
+    }
 }

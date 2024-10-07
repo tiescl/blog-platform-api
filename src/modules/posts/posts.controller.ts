@@ -74,3 +74,26 @@ PostsController.patch(
         });
     }
 );
+
+PostsController.delete(
+    "/:postId",
+    validateRouteParameter(postsIdDtoSchema),
+    getUserFromToken,
+    async function (req, res) {
+        const postId = req.params["postId"];
+
+        if (!postId) {
+            throw new NotFoundError("Invalid Post Id");
+        }
+
+        const deletedPost = await PostsService.deletePost(
+            res.locals.userId,
+            postId
+        );
+
+        res.status(StatusCode.Ok).json({
+            message: "Post Deleted Successfully",
+            post: deletedPost
+        });
+    }
+);

@@ -1,6 +1,6 @@
 import { UsersService } from "modules/users/users.service";
 import { PostsCreateDto } from "./dto";
-import { BlogPost } from "shared/entities";
+import { BlogPost, User } from "shared/entities";
 import { PostsRepository } from "./posts.repository";
 import { v4 as uuid } from "uuid";
 import { AuthenticationError, AuthorizationError } from "shared/errors";
@@ -37,18 +37,25 @@ export class PostsService {
         postId: string,
         post: PostsUpdateDto
     ): Promise<BlogPost> {
-        const oldPost = await this.getPost(postId);
+        await this.authorizeUser(userId, postId);
+
+        return PostsRepository.updatePost(postId, post);
+    }
+
+    static async deletePost(userId: string, postId: string) {
+        await this.authorizeUser(userId, postId);
+
+        return PostsRepository.deletePost(postId);
+    }
+
+    private static async authorizeUser(userId: string, postId: string) {
+        const post = await this.getPost(postId);
         const user = await UsersService.getUserById(userId);
 
-        if (
-            !user ||
-            (user.id != oldPost.author_id && user.role != "admin")
-        ) {
+        if (user.id != post.author_id && user.role != "admin") {
             throw new AuthorizationError(
                 "You are not authorized to perform this action"
             );
         }
-
-        return PostsRepository.updatePost(postId, post);
     }
 }
