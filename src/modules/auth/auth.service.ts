@@ -2,7 +2,7 @@ import { LoginDto, SignupDto } from "./dto";
 import { User } from "shared/entities";
 import { BadRequestError, ServerError } from "shared/errors";
 import { UsersService } from "modules/users/users.service";
-import { CreateUserDto } from "modules/users/users.types";
+import { UsersCreateDto } from "modules/users/users.types";
 import { TOKEN_EXPIRATION_TIME } from "./auth.constants";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcryptjs";
@@ -31,7 +31,7 @@ export class AuthService {
     ): Promise<{ user: User; token: string }> {
         const { username, email, password } = userCredentials;
 
-        const newUser: CreateUserDto = {
+        const newUser: UsersCreateDto = {
             id: uuid(),
             username,
             email,

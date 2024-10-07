@@ -6,7 +6,7 @@ export function errorMiddleware(
     err: Error,
     _req: Request,
     res: Response,
-    _next: NextFunction
+    next: NextFunction
 ) {
     Logger.error(`[${new Date().toISOString()}] ${err}`);
 
@@ -37,4 +37,6 @@ export function errorMiddleware(
     res.status(StatusCode.ServerError).json({
         message: "Internal Server Error"
     });
+
+    next();
 }

@@ -1,2 +1,2 @@
-export { Blog } from "./Blog.entity";
+export { BlogPost } from "./BlogPost.entity";
 export { User } from "./User.entity";

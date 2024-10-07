@@ -1,14 +1,14 @@
 import { BadRequestError } from "shared/errors";
 import { UsersRepository } from "./users.repository";
-import { CreateUserDto } from "./users.types";
+import { UsersCreateDto } from "./users.types";
 
 export class UsersService {
-    static async createUser(userCredentials: CreateUserDto) {
-        const userExists = await UsersRepository.userExists(
+    static async createUser(userCredentials: UsersCreateDto) {
+        const doesUserExist = await UsersRepository.doesUserExist(
             userCredentials.email
         );
 
-        if (userExists) {
+        if (doesUserExist) {
             throw new BadRequestError("Invalid email");
         }
 
@@ -17,5 +17,9 @@ export class UsersService {
 
     static getUserByEmail(email: string) {
         return UsersRepository.getUser(email, "email");
+    }
+
+    static getUserById(id: string) {
+        return UsersRepository.getUser(id);
     }
 }
