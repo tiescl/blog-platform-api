@@ -4,7 +4,7 @@ import { UsersCreateDto } from "./users.types";
 
 export class UsersService {
     static async createUser(userCredentials: UsersCreateDto) {
-        const user = await UsersService.getUserByEmail(
+        const user = await UsersService.getUserIfExists(
             userCredentials.email
         );
 
@@ -13,6 +13,14 @@ export class UsersService {
         }
 
         return UsersRepository.createUser(userCredentials);
+    }
+
+    static async getUserIfExists(email: string) {
+        try {
+            return await UsersRepository.getUser(email, "email");
+        } catch {
+            return null;
+        }
     }
 
     static getUserByEmail(email: string) {

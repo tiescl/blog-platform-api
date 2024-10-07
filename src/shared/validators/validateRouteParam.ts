@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { StatusCode } from "shared/constants";
 import { z, ZodError } from "zod";
 
-export function validateQueryParameter(schema: z.ZodObject<any, any>) {
+export function validateRouteParameter(schema: z.ZodObject<any, any>) {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
             req.params = schema.parse(req.params);

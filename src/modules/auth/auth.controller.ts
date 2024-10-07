@@ -12,7 +12,10 @@ AuthController.post(
     async function (req, res) {
         const token = await AuthService.login(req.body);
 
-        res.status(StatusCode.Ok).json({ token });
+        res.status(StatusCode.Ok).json({
+            message: "User Login Successful",
+            token
+        });
     }
 );
 
@@ -23,6 +26,7 @@ AuthController.post(
         const { user, token } = await AuthService.signup(req.body);
 
         res.status(StatusCode.Created).json({
+            message: "User Registration Successful",
             user,
             token
         });
