@@ -1,13 +1,17 @@
 import { Router } from "express";
 import { PostsService } from "./posts.service";
 import {
-    validateQueryParameter,
-    validateRequestBody
+    postsCreateDtoSchema,
+    postsIdDtoSchema,
+    postsUpdateDtoSchema
+} from "./dto";
+import {
+    validateRequestBody,
+    validateRouteParameter
 } from "shared/validators";
-import { postsCreateDtoSchema, PostsIdDto, postsIdDtoSchema } from "./dto";
 import { StatusCode } from "shared/constants";
 import { getUserFromToken } from "shared/middlewares";
-import { BadRequestError } from "shared/errors";
+import { BadRequestError, NotFoundError } from "shared/errors";
 
 export const PostsController = Router();
 
@@ -30,7 +34,7 @@ PostsController.post(
 
 PostsController.get(
     "/:postId",
-    validateQueryParameter(postsIdDtoSchema),
+    validateRouteParameter(postsIdDtoSchema),
     async function (req, res) {
         const postId = req.params.postId;
 
@@ -43,6 +47,30 @@ PostsController.get(
         res.status(StatusCode.Ok).json({
             message: "Blog Post fetched successfully",
             post: blogPost
+        });
+    }
+);
+
+PostsController.patch(
+    "/:postId",
+    validateRouteParameter(postsIdDtoSchema),
+    validateRequestBody(postsUpdateDtoSchema),
+    getUserFromToken,
+    async function (req, res) {
+        const postId = req.params["postId"];
+        if (!postId) {
+            throw new NotFoundError("Invalid Post Id");
+        }
+
+        const updatedPost = await PostsService.updatePost(
+            res.locals.userId,
+            postId,
+            req.body
+        );
+
+        res.status(StatusCode.Ok).json({
+            message: "Post Updated Successfully",
+            post: updatedPost
         });
     }
 );

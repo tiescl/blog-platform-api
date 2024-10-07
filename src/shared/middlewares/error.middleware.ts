@@ -16,6 +16,12 @@ export function errorMiddleware(
         });
     }
 
+    if (err.name == "AuthorizationError") {
+        return res.status(StatusCode.Forbidden).json({
+            message: err.message
+        });
+    }
+
     if (err.name == "NotFoundError") {
         return res.status(StatusCode.NotFound).json({
             message: err.message
