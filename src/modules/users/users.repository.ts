@@ -43,18 +43,4 @@ export class UsersRepository {
 
         return result[0];
     }
-
-    static async doesUserExist(param: string): Promise<boolean> {
-        try {
-            await this.getUser(param, "email");
-
-            return true;
-        } catch (error) {
-            if (error instanceof NotFoundError) {
-                return false;
-            }
-
-            throw error;
-        }
-    }
 }

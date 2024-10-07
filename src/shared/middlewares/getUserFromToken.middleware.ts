@@ -15,22 +15,28 @@ export function getUserFromToken(
     }
 
     jwt.verify(token, key, async (err, decodedToken) => {
-        if (err) {
-            if (err instanceof jwt.TokenExpiredError) {
-                throw new AuthenticationError(
-                    `Token expired. Date: ${err.expiredAt.toISOString()}`
-                );
+        try {
+            if (err) {
+                if (err instanceof jwt.TokenExpiredError) {
+                    throw new AuthenticationError(
+                        `Token expired. Date: ${err.expiredAt.toISOString()}`
+                    );
+                } else {
+                    throw new AuthenticationError(
+                        "Failed to identify user"
+                    );
+                }
             } else {
-                throw new AuthenticationError("Failed to identify user");
-            }
-        } else {
-            if (typeof decodedToken == "object") {
-                res.locals.userId = decodedToken.id;
-            } else {
-                res.locals.userId = decodedToken;
-            }
+                if (typeof decodedToken == "object") {
+                    res.locals.userId = decodedToken.id;
+                } else {
+                    res.locals.userId = decodedToken;
+                }
 
-            next();
+                next();
+            }
+        } catch (err) {
+            next(err);
         }
     });
 }

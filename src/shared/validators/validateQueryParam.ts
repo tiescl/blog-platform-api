@@ -1,12 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { StatusCode } from "shared/constants";
 import { z, ZodError } from "zod";
 
-// eslint-disable-next-line
-export function validateRequestBody(schema: z.ZodObject<any, any>) {
+export function validateQueryParameter(schema: z.ZodObject<any, any>) {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
-            req.body = schema.parse(req.body);
+            req.params = schema.parse(req.params);
 
             next();
         } catch (error) {
@@ -22,7 +21,7 @@ export function validateRequestBody(schema: z.ZodObject<any, any>) {
             } else {
                 res.status(StatusCode.BadRequest).json({
                     message: "Bad Request",
-                    errors: ["Invalid Request Body"]
+                    errors: ["Invalid Param"]
                 });
             }
         }
