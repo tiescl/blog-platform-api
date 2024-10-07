@@ -40,6 +40,19 @@ export class PostsRepository {
         return result[0];
     }
 
+    static getPosts(offset: number, limit: number): Promise<BlogPost[]> {
+        const result = db.manager.query(
+            `
+            SELECT * FROM posts
+            OFFSET $1
+            LIMIT $2
+            `,
+            [offset, limit]
+        );
+
+        return result;
+    }
+
     static async updatePost(postId: string, post: PostsUpdateDto) {
         const values = Object.values(post);
         const columns = Object.keys(post);
