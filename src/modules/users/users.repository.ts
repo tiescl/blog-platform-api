@@ -33,7 +33,7 @@ export class UsersRepository {
             `
             SELECT * FROM users
             WHERE ${column} = $1
-        `,
+            `,
             [param]
         );
 

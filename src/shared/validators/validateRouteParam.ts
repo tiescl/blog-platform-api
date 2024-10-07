@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { ParamsDictionary } from "express-serve-static-core";
 import { StatusCode } from "shared/constants";
 import { z, ZodError } from "zod";
 
@@ -27,4 +28,8 @@ export function validateRouteParameter(schema: z.ZodObject<any, any>) {
             }
         }
     };
+}
+
+export function getRouteParams<T>(params: ParamsDictionary): T {
+    return params as T;
 }
