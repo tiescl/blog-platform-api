@@ -7,11 +7,17 @@ import {
 } from "./dto";
 import {
     validateRequestBody,
-    validateRouteParameter
+    validateRouteParameter,
+    validateQueryParams,
+    getSearchParams
 } from "shared/validators";
 import { StatusCode } from "shared/constants";
 import { getUserFromToken } from "shared/middlewares";
 import { BadRequestError, NotFoundError } from "shared/errors";
+import {
+    PostsPaginationDto,
+    postsPaginationDtoSchema
+} from "./dto/posts-pagination.dto";
 
 export const PostsController = Router();
 
@@ -69,7 +75,7 @@ PostsController.patch(
         );
 
         res.status(StatusCode.Ok).json({
-            message: "Post Updated Successfully",
+            message: "Post updated successfully",
             post: updatedPost
         });
     }
@@ -92,8 +98,25 @@ PostsController.delete(
         );
 
         res.status(StatusCode.Ok).json({
-            message: "Post Deleted Successfully",
+            message: "Post deleted successfully",
             post: deletedPost
+        });
+    }
+);
+
+PostsController.get(
+    "/",
+    validateQueryParams(postsPaginationDtoSchema),
+    async function (req, res) {
+        const { page, limit } = getSearchParams<PostsPaginationDto>(
+            req.query
+        );
+
+        const posts = await PostsService.getPosts(page, limit);
+
+        res.status(StatusCode.Ok).json({
+            message: "Posts fetched successfully",
+            posts: posts
         });
     }
 );

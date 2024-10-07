@@ -1,6 +1,6 @@
 import { UsersService } from "modules/users/users.service";
 import { PostsCreateDto } from "./dto";
-import { BlogPost, User } from "shared/entities";
+import { BlogPost } from "shared/entities";
 import { PostsRepository } from "./posts.repository";
 import { v4 as uuid } from "uuid";
 import { AuthenticationError, AuthorizationError } from "shared/errors";
@@ -30,6 +30,12 @@ export class PostsService {
 
     static getPost(postId: string): Promise<BlogPost> {
         return PostsRepository.getPost(postId);
+    }
+
+    static getPosts(page: number, limit: number): Promise<BlogPost[]> {
+        const offset = page * limit;
+
+        return PostsRepository.getPosts(offset, limit);
     }
 
     static async updatePost(
