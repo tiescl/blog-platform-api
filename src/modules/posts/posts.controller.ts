@@ -2,6 +2,7 @@ import { Router } from "express";
 import { PostsService } from "./posts.service";
 import {
     postsCreateDtoSchema,
+    PostsIdDto,
     postsIdDtoSchema,
     postsUpdateDtoSchema
 } from "./dto";
@@ -9,7 +10,8 @@ import {
     validateRequestBody,
     validateRouteParameter,
     validateQueryParams,
-    getSearchParams
+    getSearchParams,
+    getRouteParams
 } from "shared/validators";
 import { StatusCode } from "shared/constants";
 import { getUserFromToken } from "shared/middlewares";
@@ -42,11 +44,7 @@ PostsController.get(
     "/:postId",
     validateRouteParameter(postsIdDtoSchema),
     async function (req, res) {
-        const postId = req.params.postId;
-
-        if (!postId) {
-            throw new BadRequestError("Invalid Post Id");
-        }
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
 
         const blogPost = await PostsService.getPost(postId);
 
@@ -63,10 +61,7 @@ PostsController.patch(
     validateRequestBody(postsUpdateDtoSchema),
     getUserFromToken,
     async function (req, res) {
-        const postId = req.params["postId"];
-        if (!postId) {
-            throw new NotFoundError("Invalid Post Id");
-        }
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
 
         const updatedPost = await PostsService.updatePost(
             res.locals.userId,
@@ -86,11 +81,7 @@ PostsController.delete(
     validateRouteParameter(postsIdDtoSchema),
     getUserFromToken,
     async function (req, res) {
-        const postId = req.params["postId"];
-
-        if (!postId) {
-            throw new NotFoundError("Invalid Post Id");
-        }
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
 
         const deletedPost = await PostsService.deletePost(
             res.locals.userId,
