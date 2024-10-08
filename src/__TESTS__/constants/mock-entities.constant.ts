@@ -2,7 +2,11 @@ import { PostsCreateDto } from "modules/posts/dto";
 import { UsersCreateDto } from "modules/users/users.types";
 import { BlogPost, User } from "shared/entities";
 import { v4 as uuid } from "uuid";
-import { StatusCode } from "./status-codes.constant";
+import { StatusCode } from "shared/constants";
+import { type Express } from "express";
+import { SuperTestStatic } from "supertest";
+import { TMockUserRepo } from "__TESTS__/posts.test";
+import { TMockPostsRepo } from "__TESTS__/posts.test";
 
 export const mockUser: Omit<UsersCreateDto, "id" | "role"> = {
     username: "qwerty",
@@ -52,12 +56,9 @@ export const newCompleteUser: User = {
 };
 
 export async function signupUser(
-    // @ts-ignore
-    request,
-    // @ts-ignore
-    app,
-    // @ts-ignore
-    mockUsersRepository
+    request: SuperTestStatic,
+    app: Express,
+    mockUsersRepository: TMockUserRepo
 ) {
     mockUsersRepository.getUser.mockRejectedValueOnce(
         new Error("error indicating the user does not exist")
@@ -76,17 +77,11 @@ export async function signupUser(
 }
 
 export async function createBlogPost(
-    // @ts-ignore
-    request,
-    // @ts-ignore
-    app,
-    // @ts-ignore
-    mockPostsRepository,
-    // @ts-ignore
-    mockUsersRepository,
-    // @ts-ignore
-    token,
-    // @ts-ignore
+    request: SuperTestStatic,
+    app: Express,
+    mockPostsRepository: TMockPostsRepo,
+    mockUsersRepository: TMockUserRepo,
+    token: string,
     author_id = ""
 ) {
     mockPostsRepository.createPost.mockResolvedValue({
