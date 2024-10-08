@@ -1,20 +1,20 @@
 import request from "supertest";
 import { app } from "app";
-import { PostsRepository } from "./posts.repository";
+import { PostsRepository } from "modules/posts/posts.repository";
 import { UsersRepository } from "modules/users/users.repository";
 import {
     createBlogPost,
     mockPost,
     mockPosts,
     mockUpdatePost,
-    signupUser,
-    StatusCode
-} from "shared/constants";
+    signupUser
+} from "./constants";
+import { StatusCode } from "shared/constants";
 import { NotFoundError } from "shared/errors";
 import { User } from "shared/entities";
 import { randomUUID } from "crypto";
 
-jest.mock("./posts.repository");
+jest.mock("modules/posts/posts.repository");
 jest.mock("modules/users/users.repository");
 
 const mockPostsRepository = PostsRepository as jest.Mocked<
@@ -23,6 +23,9 @@ const mockPostsRepository = PostsRepository as jest.Mocked<
 const mockUsersRepository = UsersRepository as jest.Mocked<
     typeof UsersRepository
 >;
+
+export type TMockUserRepo = typeof mockUsersRepository;
+export type TMockPostsRepo = typeof mockPostsRepository;
 
 describe("Blog Post Management", () => {
     var userResBody: { token: string; user: User };
@@ -34,7 +37,6 @@ describe("Blog Post Management", () => {
     });
 
     describe("[POST /blogs]", () => {
-        console.log(mockPosts);
         test("should create a new blog post", async () => {
             await createBlogPost(
                 request,
