@@ -11,7 +11,7 @@ jest.mock("modules/users/users.service");
 
 const mockUsersService = UsersService as jest.Mocked<typeof UsersService>;
 
-describe("User Auth", () => {
+describe("User Authentication", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -35,8 +35,11 @@ describe("User Auth", () => {
                 password: "qwerty123"
             });
 
-            expect(response.status).toEqual(201);
-            expect(response.body.user).toEqual(newUser);
+            expect(response.status).toEqual(StatusCode.Created);
+            expect(response.body.user).toEqual({
+                ...newUser,
+                created_at: newUser.created_at.toISOString()
+            });
             expect(response.body.token).toBeDefined();
             expect(mockUsersService.createUser).toHaveBeenCalledWith(
                 expect.objectContaining({

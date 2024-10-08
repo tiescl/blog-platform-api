@@ -1,6 +1,6 @@
-import { BadRequestError } from "shared/errors";
 import { UsersRepository } from "./users.repository";
 import { UsersCreateDto } from "./users.types";
+import { BadRequestError } from "shared/errors";
 
 export class UsersService {
     static async createUser(userCredentials: UsersCreateDto) {

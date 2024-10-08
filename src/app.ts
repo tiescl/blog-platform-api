@@ -15,7 +15,6 @@ export const app = express();
 
 const CLIENT_URL = process.env.CLIENT_URL || "*";
 
-// ==== Middlewares ==== //
 app.use(
     cors({
         origin: CLIENT_URL,
@@ -34,6 +33,5 @@ app.get("/", async (_req: Request, res: Response) => {
 app.use("/auth", AuthController);
 app.use("/blogs", PostsController);
 
-// ==== Routes ==== //
 app.use(notFoundMiddleware);
 app.use(errorMiddleware as ErrorRequestHandler);
