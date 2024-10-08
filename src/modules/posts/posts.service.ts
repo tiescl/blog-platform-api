@@ -1,21 +1,16 @@
 import { UsersService } from "modules/users/users.service";
-import { PostsCreateDto } from "./dto";
-import { BlogPost } from "shared/entities";
 import { PostsRepository } from "./posts.repository";
+import { PostsCreateDto, PostsUpdateDto } from "./dto";
+import { AuthorizationError } from "shared/errors";
+import { BlogPost } from "shared/entities";
 import { v4 as uuid } from "uuid";
-import { AuthenticationError, AuthorizationError } from "shared/errors";
-import { PostsUpdateDto } from "./dto/posts-update.dto";
 
 export class PostsService {
     static async createPost(
         post: Omit<PostsCreateDto, "id">,
         userId: string
     ): Promise<BlogPost> {
-        const user = await UsersService.getUserById(userId);
-
-        if (!user) {
-            throw new AuthenticationError("Invalid token");
-        }
+        await UsersService.getUserById(userId);
 
         const newPost: PostsCreateDto = {
             id: uuid(),

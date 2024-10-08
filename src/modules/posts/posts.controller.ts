@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { PostsService } from "./posts.service";
 import {
-    postsCreateDtoSchema,
-    PostsIdDto,
     postsIdDtoSchema,
-    postsUpdateDtoSchema
+    postsCreateDtoSchema,
+    postsUpdateDtoSchema,
+    postsPaginationDtoSchema,
+    PostsIdDto,
+    PostsPaginationDto
 } from "./dto";
 import {
     validateRequestBody,
@@ -15,11 +17,6 @@ import {
 } from "shared/validators";
 import { StatusCode } from "shared/constants";
 import { getUserFromToken } from "shared/middlewares";
-import { BadRequestError, NotFoundError } from "shared/errors";
-import {
-    PostsPaginationDto,
-    postsPaginationDtoSchema
-} from "./dto/posts-pagination.dto";
 
 export const PostsController = Router();
 
