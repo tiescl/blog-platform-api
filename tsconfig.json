@@ -16,9 +16,7 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "noUncheckedIndexedAccess": true,
-        "skipLibCheck": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true
+        "skipLibCheck": true
     },
     "include": ["src/**/*"]
 }
