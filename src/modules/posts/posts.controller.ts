@@ -16,7 +16,7 @@ import {
     getRouteParams
 } from "shared/validators";
 import { StatusCode } from "shared/constants";
-import { getUserFromToken } from "shared/middlewares";
+import { authorizeUser, getUserFromToken } from "shared/middlewares";
 
 export const PostsController = Router();
 
@@ -57,11 +57,11 @@ PostsController.patch(
     validateRouteParameter(postsIdDtoSchema),
     validateRequestBody(postsUpdateDtoSchema),
     getUserFromToken,
+    authorizeUser,
     async function (req, res) {
         const { postId } = getRouteParams<PostsIdDto>(req.params);
 
         const updatedPost = await PostsService.updatePost(
-            res.locals.userId,
             postId,
             req.body
         );
@@ -77,13 +77,11 @@ PostsController.delete(
     "/:postId",
     validateRouteParameter(postsIdDtoSchema),
     getUserFromToken,
+    authorizeUser,
     async function (req, res) {
         const { postId } = getRouteParams<PostsIdDto>(req.params);
 
-        const deletedPost = await PostsService.deletePost(
-            res.locals.userId,
-            postId
-        );
+        const deletedPost = await PostsService.deletePost(postId);
 
         res.status(StatusCode.Ok).json({
             message: "Post deleted successfully",
