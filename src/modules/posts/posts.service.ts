@@ -10,11 +10,11 @@ export class PostsService {
         post: Omit<PostsCreateDto, "id">,
         userId: string
     ): Promise<BlogPost> {
-        await UsersService.getUserById(userId);
+        const user = await UsersService.getUserById(userId);
 
         const newPost: PostsCreateDto = {
             id: uuid(),
-            author_id: userId,
+            author_id: user.id,
             title: post.title,
             content: post.content,
             tags: post.tags
@@ -27,7 +27,10 @@ export class PostsService {
         return PostsRepository.getPost(postId);
     }
 
-    static getPosts(page: number, limit: number): Promise<BlogPost[]> {
+    static getPosts(
+        page: number = 0,
+        limit: number = 5
+    ): Promise<BlogPost[]> {
         const offset = page * limit;
 
         return PostsRepository.getPosts(offset, limit);
