@@ -21,7 +21,7 @@ services:
             context: .
         develop:
             watch:
-                - action: rebuild
+                - action: sync+restart
                   path: .
                   target: /app
                   ignore:

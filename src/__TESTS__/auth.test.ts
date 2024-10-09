@@ -1,16 +1,17 @@
 import request from "supertest";
 import { app } from "app";
 import { UsersService } from "modules/users/users.service";
-import { User } from "shared/entities/User.entity";
-import { AuthenticationError } from "shared/errors";
+import { User } from "shared/entities";
+import { BadRequestError } from "shared/errors";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcryptjs";
+import { StatusCode } from "shared/constants";
 
 jest.mock("modules/users/users.service");
 
 const mockUsersService = UsersService as jest.Mocked<typeof UsersService>;
 
-describe("User Auth", () => {
+describe("User Authentication", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -23,7 +24,7 @@ describe("User Auth", () => {
                 email: "qwerty@example.com",
                 password: "qwerty123",
                 role: "user",
-                created_at: new Date().toISOString()
+                created_at: new Date()
             };
 
             mockUsersService.createUser.mockResolvedValueOnce(newUser);
@@ -34,8 +35,11 @@ describe("User Auth", () => {
                 password: "qwerty123"
             });
 
-            expect(response.status).toEqual(201);
-            expect(response.body.user).toEqual(newUser);
+            expect(response.status).toEqual(StatusCode.Created);
+            expect(response.body.user).toEqual({
+                ...newUser,
+                created_at: newUser.created_at.toISOString()
+            });
             expect(response.body.token).toBeDefined();
             expect(mockUsersService.createUser).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -56,14 +60,14 @@ describe("User Auth", () => {
             };
 
             mockUsersService.createUser.mockRejectedValueOnce(
-                new AuthenticationError("Invalid email")
+                new BadRequestError("Invalid email")
             );
 
             const response = await request(app)
                 .post("/auth/signup")
                 .send(existingUser);
 
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(StatusCode.BadRequest);
             expect(response.body.message).toBe("Invalid email");
         });
     });
@@ -81,7 +85,7 @@ describe("User Auth", () => {
                 email: userCredentials.email,
                 password: await bcrypt.hash(userCredentials.password, 10),
                 role: "user",
-                created_at: new Date().toISOString()
+                created_at: new Date()
             };
 
             mockUsersService.getUserByEmail.mockResolvedValueOnce(
@@ -92,7 +96,7 @@ describe("User Auth", () => {
                 .post("/auth/login")
                 .send(userCredentials);
 
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(StatusCode.Ok);
             expect(response.body.token).toBeDefined();
             expect(mockUsersService.getUserByEmail).toHaveBeenCalledWith(
                 userCredentials.email
@@ -111,7 +115,7 @@ describe("User Auth", () => {
                 email: userCredentials.email,
                 password: "correctpassword",
                 role: "user",
-                created_at: new Date().toISOString()
+                created_at: new Date()
             };
 
             mockUsersService.getUserByEmail.mockResolvedValueOnce(
@@ -122,7 +126,7 @@ describe("User Auth", () => {
                 .post("/auth/login")
                 .send(userCredentials);
 
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(StatusCode.Unauthenticated);
             expect(response.body.message).toBe("Invalid Password");
         });
     });

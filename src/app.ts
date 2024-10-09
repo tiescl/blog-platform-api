@@ -9,12 +9,12 @@ import {
 } from "./shared/middlewares";
 import { db } from "database/data-source";
 import { AuthController } from "modules/auth/auth.controller";
+import { PostsController } from "modules/posts/posts.controller";
 
 export const app = express();
 
 const CLIENT_URL = process.env.CLIENT_URL || "*";
 
-// ==== Middlewares ==== //
 app.use(
     cors({
         origin: CLIENT_URL,
@@ -31,7 +31,7 @@ app.get("/", async (_req: Request, res: Response) => {
     res.status(200).json(now[0]);
 });
 app.use("/auth", AuthController);
+app.use("/blogs", PostsController);
 
-// ==== Routes ==== //
 app.use(notFoundMiddleware);
 app.use(errorMiddleware as ErrorRequestHandler);

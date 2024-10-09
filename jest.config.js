@@ -3,7 +3,6 @@ export default {
     testEnvironment: "node",
     moduleDirectories: ["node_modules", "src"],
     transform: {
-        "^.+.tsx?$": ["ts-jest", {}]
+        "^.+.tsx?$": ["@swc/jest"]
     }
 };
-
