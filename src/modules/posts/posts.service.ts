@@ -47,9 +47,15 @@ export class PostsService {
         return PostsRepository.deletePost(postId);
     }
 
-    static async getPostComments(postId: string): Promise<Comment[]> {
-        const post = await PostsService.getPost(postId);
+    static async createPostComment(
+        postId: string,
+        userId: string,
+        comment: Pick<Comment, "content">
+    ): Promise<Comment> {
+        return CommentsService.createComment(postId, userId, comment);
+    }
 
-        return CommentsService.getCommentsByPostId(post.id);
+    static async getPostComments(postId: string): Promise<Comment[]> {
+        return CommentsService.getCommentsByPostId(postId);
     }
 }
