@@ -1,7 +1,8 @@
 import { UsersService } from "modules/users/users.service";
+import { CommentsService } from "modules/comments/comments.service";
 import { PostsRepository } from "./posts.repository";
 import { PostsCreateDto, PostsUpdateDto } from "./dto";
-import { BlogPost } from "shared/entities";
+import { BlogPost, Comment } from "shared/entities";
 import { v4 as uuid } from "uuid";
 
 export class PostsService {
@@ -44,5 +45,11 @@ export class PostsService {
 
     static async deletePost(postId: string) {
         return PostsRepository.deletePost(postId);
+    }
+
+    static async getPostComments(postId: string): Promise<Comment[]> {
+        const post = await PostsService.getPost(postId);
+
+        return CommentsService.getCommentsByPostId(post.id);
     }
 }
