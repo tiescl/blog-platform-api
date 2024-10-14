@@ -42,9 +42,16 @@ class DbClient {
             $$ language 'plpgsql';
         `;
 
-        const UPDATE_MODIFIED_TRIGGER = `
+        const UPDATE_MODIFIED_TRIGGER_POSTS = `
             CREATE OR REPLACE TRIGGER update_post_modtime
             BEFORE UPDATE ON posts
+            FOR EACH ROW
+            EXECUTE FUNCTION update_modified_column();
+        `;
+
+        const UPDATE_MODIFIED_TRIGGER_COMMENTS = `
+            CREATE OR REPLACE TRIGGER update_comment_modtime
+            BEFORE UPDATE ON comments
             FOR EACH ROW
             EXECUTE FUNCTION update_modified_column();
         `;
@@ -52,10 +59,21 @@ class DbClient {
         const CREATE_POST_TABLE_QUERY = `
             CREATE TABLE IF NOT EXISTS posts (
                 id UUID PRIMARY KEY,
-                author_id UUID REFERENCES users(id),
+                author_id UUID REFERENCES users(id) ON DELETE SET NULL,
                 title VARCHAR(255) NOT NULL,
                 content TEXT NOT NULL,
                 tags VARCHAR(100) ARRAY,
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        `;
+
+        const CREATE_COMMENT_TABLE_QUERY = `
+            CREATE TABLE IF NOT EXISTS comments (
+                id UUID PRIMARY KEY,
+                blog_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+                user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+                content TEXT NOT NULL,
                 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
@@ -65,7 +83,9 @@ class DbClient {
             await queryRunner.query(UPDATE_MODIFIED_FUNCTION);
             await queryRunner.query(CREATE_USER_TABLE_QUERY);
             await queryRunner.query(CREATE_POST_TABLE_QUERY);
-            await queryRunner.query(UPDATE_MODIFIED_TRIGGER);
+            await queryRunner.query(CREATE_COMMENT_TABLE_QUERY);
+            await queryRunner.query(UPDATE_MODIFIED_TRIGGER_POSTS);
+            await queryRunner.query(UPDATE_MODIFIED_TRIGGER_COMMENTS);
         } catch (error) {
             throw new DatabaseError(`Table creation failed: ${error}`);
         } finally {
