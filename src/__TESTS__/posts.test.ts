@@ -7,9 +7,9 @@ import {
     mockPost,
     mockPosts,
     mockUpdatePost,
-    signupUser
-} from "./constants";
-import { StatusCode } from "shared/constants";
+    signupUser,
+    StatusCode
+} from "shared/constants";
 import { NotFoundError } from "shared/errors";
 import { User } from "shared/entities";
 import { randomUUID } from "crypto";
@@ -222,7 +222,7 @@ describe("Blog Post Management", () => {
             });
         });
 
-        it("should return an empty array if there are no posts", async () => {
+        test("should return an empty array if there are no posts", async () => {
             mockPostsRepository.getPosts.mockResolvedValueOnce([]);
 
             const res = await request(app).get("/blogs?page=1&limit=10");

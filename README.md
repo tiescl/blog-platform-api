@@ -18,23 +18,22 @@
 
 ### Steps
 
--   1 Clone the repo
+1. Clone the repo
 
 ```zsh
 git clone https://github.com/tiescl/blog-platform-api.git
 ```
 
--   2 Create a docker image and a container
+2. Create a docker image and a container
 
 ```zsh
 docker compose up --build
 ```
 
--   3 Start making requests
+3. Start making requests
 
--   4 When done, run:
+4. When done, run:
 
 ```zsh
 docker compose down --volumes
 ```
-

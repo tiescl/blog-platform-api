@@ -5,8 +5,8 @@ import { v4 as uuid } from "uuid";
 import { StatusCode } from "shared/constants";
 import { type Express } from "express";
 import { SuperTestStatic } from "supertest";
-import { TMockUserRepo } from "__TESTS__/posts.test";
-import { TMockPostsRepo } from "__TESTS__/posts.test";
+import { TMockUserRepo } from "__tests__/posts.test";
+import { TMockPostsRepo } from "__tests__/posts.test";
 
 export const mockUser: Omit<UsersCreateDto, "id" | "role"> = {
     username: "qwerty",
