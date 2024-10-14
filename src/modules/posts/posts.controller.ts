@@ -8,6 +8,7 @@ import {
     PostsIdDto,
     PostsPaginationDto
 } from "./dto";
+import { commentsCreateDtoSchema } from "modules/comments/dto";
 import {
     validateRequestBody,
     validateRouteParameter,
@@ -118,6 +119,27 @@ PostsController.get(
         res.status(StatusCode.Ok).json({
             message: "Post Comments fetched successfully",
             comments: comments
+        });
+    }
+);
+
+PostsController.post(
+    "/:postId/comments",
+    validateRequestBody(commentsCreateDtoSchema),
+    validateRouteParameter(postsIdDtoSchema),
+    getUserFromToken,
+    async function (req, res) {
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
+
+        const newComment = await PostsService.createPostComment(
+            postId,
+            res.locals.userId,
+            req.body
+        );
+
+        res.status(StatusCode.Created).json({
+            message: `Comment for Post [${newComment.blog_id}] created successfully`,
+            comment: newComment
         });
     }
 );
