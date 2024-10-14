@@ -106,3 +106,18 @@ PostsController.get(
         });
     }
 );
+
+PostsController.get(
+    "/:postId/comments",
+    validateRouteParameter(postsIdDtoSchema),
+    async function (req, res) {
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
+
+        const comments = await PostsService.getPostComments(postId);
+
+        res.status(StatusCode.Ok).json({
+            message: "Post Comments fetched successfully",
+            comments: comments
+        });
+    }
+);
