@@ -12,6 +12,10 @@ export class CommentsService {
         return CommentsRepository.getCommentsByPostId(post.id);
     }
 
+    static async getComment(commentId: string): Promise<Comment> {
+        return CommentsRepository.getComment(commentId);
+    }
+
     static async createComment(
         postId: string,
         userId: string,
@@ -28,5 +32,15 @@ export class CommentsService {
         };
 
         return CommentsRepository.createComment(newComment);
+    }
+
+    static async updateComment(
+        commentId: string,
+        comment: Pick<Comment, "content">
+    ): Promise<Comment> {
+        return CommentsRepository.updateComment(
+            commentId,
+            comment.content
+        );
     }
 }
