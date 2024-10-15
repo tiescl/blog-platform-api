@@ -1,6 +1,6 @@
 import request from "supertest";
 import { app } from "app";
-import { UsersService } from "modules/users/users.service";
+import { mockUsersService } from "./repoMocks";
 import { User } from "shared/entities";
 import { BadRequestError } from "shared/errors";
 import { v4 as uuid } from "uuid";
@@ -8,8 +8,6 @@ import bcrypt from "bcryptjs";
 import { StatusCode } from "shared/constants";
 
 jest.mock("modules/users/users.service");
-
-const mockUsersService = UsersService as jest.Mocked<typeof UsersService>;
 
 describe("User Authentication", () => {
     beforeEach(() => {

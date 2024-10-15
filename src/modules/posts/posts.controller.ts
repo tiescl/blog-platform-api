@@ -8,6 +8,7 @@ import {
     PostsIdDto,
     PostsPaginationDto
 } from "./dto";
+import { commentsCreateDtoSchema } from "modules/comments/dto";
 import {
     validateRequestBody,
     validateRouteParameter,
@@ -16,7 +17,11 @@ import {
     getRouteParams
 } from "shared/validators";
 import { StatusCode } from "shared/constants";
-import { authorizeUser, getUserFromToken } from "shared/middlewares";
+import {
+    authorizeUser,
+    authorizeUserOrAdmin,
+    getUserFromToken
+} from "shared/middlewares";
 
 export const PostsController = Router();
 
@@ -67,7 +72,7 @@ PostsController.patch(
         );
 
         res.status(StatusCode.Ok).json({
-            message: "Post updated successfully",
+            message: `Post [${updatedPost.id}] updated successfully`,
             post: updatedPost
         });
     }
@@ -77,7 +82,7 @@ PostsController.delete(
     "/:postId",
     validateRouteParameter(postsIdDtoSchema),
     getUserFromToken,
-    authorizeUser,
+    authorizeUserOrAdmin,
     async function (req, res) {
         const { postId } = getRouteParams<PostsIdDto>(req.params);
 
@@ -103,6 +108,42 @@ PostsController.get(
         res.status(StatusCode.Ok).json({
             message: "Posts fetched successfully",
             posts: posts
+        });
+    }
+);
+
+PostsController.get(
+    "/:postId/comments",
+    validateRouteParameter(postsIdDtoSchema),
+    async function (req, res) {
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
+
+        const comments = await PostsService.getPostComments(postId);
+
+        res.status(StatusCode.Ok).json({
+            message: "Post Comments fetched successfully",
+            comments: comments
+        });
+    }
+);
+
+PostsController.post(
+    "/:postId/comments",
+    validateRequestBody(commentsCreateDtoSchema),
+    validateRouteParameter(postsIdDtoSchema),
+    getUserFromToken,
+    async function (req, res) {
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
+
+        const newComment = await PostsService.createPostComment(
+            postId,
+            res.locals.userId,
+            req.body
+        );
+
+        res.status(StatusCode.Created).json({
+            message: `Comment for Post [${newComment.blog_id}] created successfully`,
+            comment: newComment
         });
     }
 );

@@ -1,7 +1,6 @@
 import request from "supertest";
 import { app } from "app";
-import { PostsRepository } from "modules/posts/posts.repository";
-import { UsersRepository } from "modules/users/users.repository";
+import { mockUsersRepository, mockPostsRepository } from "./repoMocks";
 import {
     createBlogPost,
     mockPost,
@@ -16,16 +15,6 @@ import { randomUUID } from "crypto";
 
 jest.mock("modules/posts/posts.repository");
 jest.mock("modules/users/users.repository");
-
-const mockPostsRepository = PostsRepository as jest.Mocked<
-    typeof PostsRepository
->;
-const mockUsersRepository = UsersRepository as jest.Mocked<
-    typeof UsersRepository
->;
-
-export type TMockUserRepo = typeof mockUsersRepository;
-export type TMockPostsRepo = typeof mockPostsRepository;
 
 describe("Blog Post Management", () => {
     var userResBody: { token: string; user: User };

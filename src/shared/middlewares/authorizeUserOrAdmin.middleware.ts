@@ -5,7 +5,7 @@ import { UsersService } from "modules/users/users.service";
 import { BlogPost, Comment } from "shared/entities";
 import { AuthorizationError } from "shared/errors";
 
-export async function authorizeUser(
+export async function authorizeUserOrAdmin(
     req: Request,
     res: Response,
     next: NextFunction
@@ -25,7 +25,7 @@ export async function authorizeUser(
 
     try {
         // @ts-expect-error this should in no cases fail
-        if (user.id != entity[field]) {
+        if (user.id != entity[field] && user.role != "admin") {
             throw new AuthorizationError(
                 "You are not authorized to perform this action"
             );
