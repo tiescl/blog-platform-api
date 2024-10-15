@@ -68,7 +68,7 @@ PostsController.patch(
         );
 
         res.status(StatusCode.Ok).json({
-            message: "Post updated successfully",
+            message: `Post [${updatedPost.id}] updated successfully`,
             post: updatedPost
         });
     }
