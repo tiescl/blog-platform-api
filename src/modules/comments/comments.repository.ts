@@ -1,7 +1,7 @@
 import { db } from "database/data-source";
 import { Comment } from "shared/entities";
 import { CommentsCreateDto } from "./dto";
-import { DatabaseError } from "shared/errors";
+import { DatabaseError, NotFoundError } from "shared/errors";
 
 export class CommentsRepository {
     static async getCommentsByPostId(postId: string): Promise<Comment[]> {
@@ -13,6 +13,23 @@ export class CommentsRepository {
             `,
             [postId]
         );
+    }
+
+    static async getComment(commentId: string): Promise<Comment> {
+        const result = await db.manager.query(
+            `
+            SELECT *
+            FROM comments
+            WHERE id = $1
+            `,
+            [commentId]
+        );
+
+        if (!result[0]) {
+            throw new NotFoundError(`Comment ${commentId} does not exist`);
+        }
+
+        return result[0];
     }
 
     static async createComment(
@@ -34,5 +51,23 @@ export class CommentsRepository {
         }
 
         return result[0];
+    }
+
+    static async updateComment(commentId: string, content: string) {
+        const result = await db.manager.query(
+            `
+            UPDATE comments
+            SET content = $1
+            WHERE id = $2
+            RETURNING *
+            `,
+            [content, commentId]
+        );
+
+        if (!result[0] || !result[0][0]) {
+            throw new DatabaseError("Errors connecting to the database");
+        }
+
+        return result[0][0];
     }
 }
