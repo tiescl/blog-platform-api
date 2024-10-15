@@ -70,11 +70,11 @@ export class PostsRepository {
             [...values, postId]
         );
 
-        if (!result[0]) {
+        if (!result[0] || !result[0][0]) {
             throw new DatabaseError("Errors connecting to the database");
         }
 
-        return result[0];
+        return result[0][0];
     }
 
     static async deletePost(postId: string) {
@@ -87,10 +87,10 @@ export class PostsRepository {
             [postId]
         );
 
-        if (!result[0]) {
+        if (!result[0] || !result[0][0]) {
             throw new DatabaseError("Errors connecting to the database");
         }
 
-        return result[0];
+        return result[0][0];
     }
 }
