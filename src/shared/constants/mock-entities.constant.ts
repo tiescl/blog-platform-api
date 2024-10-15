@@ -1,12 +1,11 @@
 import { PostsCreateDto } from "modules/posts/dto";
 import { UsersCreateDto } from "modules/users/users.types";
-import { BlogPost, User } from "shared/entities";
+import { BlogPost, Comment, User } from "shared/entities";
 import { v4 as uuid } from "uuid";
 import { StatusCode } from "shared/constants";
 import { type Express } from "express";
 import { SuperTestStatic } from "supertest";
-import { TMockUserRepo } from "__tests__/posts.test";
-import { TMockPostsRepo } from "__tests__/posts.test";
+import { TMockUserRepo, TMockPostsRepo } from "__tests__/repoMocks";
 
 export const mockUser: Omit<UsersCreateDto, "id" | "role"> = {
     username: "qwerty",
@@ -18,6 +17,10 @@ export const mockPost: Omit<PostsCreateDto, "id" | "author_id"> = {
     title: "post",
     content: "posty post",
     tags: ["tag1", "tag2"]
+};
+
+export const mockComment: Pick<Comment, "content"> = {
+    content: "Hello, world"
 };
 
 export const mockUpdatePost: Omit<
@@ -32,6 +35,15 @@ export const newCompletePost: BlogPost = {
     id: uuid(),
     author_id: uuid(),
     ...mockPost,
+    updated_at: new Date(),
+    created_at: new Date()
+};
+
+export const newCompleteComment: Comment = {
+    id: uuid(),
+    blog_id: uuid(),
+    user_id: uuid(),
+    content: "Hello, world",
     updated_at: new Date(),
     created_at: new Date()
 };

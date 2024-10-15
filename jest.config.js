@@ -4,5 +4,6 @@ export default {
     moduleDirectories: ["node_modules", "src"],
     transform: {
         "^.+.tsx?$": ["@swc/jest"]
-    }
+    },
+    testPathIgnorePatterns: ["./src/__tests__/repoMocks.ts"]
 };
