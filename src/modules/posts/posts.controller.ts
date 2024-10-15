@@ -17,7 +17,11 @@ import {
     getRouteParams
 } from "shared/validators";
 import { StatusCode } from "shared/constants";
-import { authorizeUser, getUserFromToken } from "shared/middlewares";
+import {
+    authorizeUser,
+    authorizeUserOrAdmin,
+    getUserFromToken
+} from "shared/middlewares";
 
 export const PostsController = Router();
 
@@ -78,7 +82,7 @@ PostsController.delete(
     "/:postId",
     validateRouteParameter(postsIdDtoSchema),
     getUserFromToken,
-    authorizeUser,
+    authorizeUserOrAdmin,
     async function (req, res) {
         const { postId } = getRouteParams<PostsIdDto>(req.params);
 
