@@ -43,4 +43,8 @@ export class CommentsService {
             comment.content
         );
     }
+
+    static deleteComment(commentId: string): Promise<Comment> {
+        return CommentsRepository.deleteComment(commentId);
+    }
 }
