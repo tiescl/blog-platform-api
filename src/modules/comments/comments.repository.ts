@@ -70,4 +70,21 @@ export class CommentsRepository {
 
         return result[0][0];
     }
+
+    static async deleteComment(commentId: string): Promise<Comment> {
+        const result = await db.manager.query(
+            `
+            DELETE FROM comments
+            WHERE id = $1
+            RETURNING *
+            `,
+            [commentId]
+        );
+
+        if (!result[0] || !result[0][0]) {
+            throw new DatabaseError("Errors connecting to the database");
+        }
+
+        return result[0][0];
+    }
 }
