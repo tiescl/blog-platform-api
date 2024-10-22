@@ -17,11 +17,7 @@ import {
     getRouteParams
 } from "shared/validators";
 import { StatusCode } from "shared/constants";
-import {
-    authorizeUser,
-    authorizeUserOrAdmin,
-    getUserFromToken
-} from "shared/middlewares";
+import { authorizeAccess, getUserFromToken } from "shared/middlewares";
 
 export const PostsController = Router();
 
@@ -62,7 +58,7 @@ PostsController.patch(
     validateRouteParameter(postsIdDtoSchema),
     validateRequestBody(postsUpdateDtoSchema),
     getUserFromToken,
-    authorizeUser,
+    authorizeAccess(["user"]),
     async function (req, res) {
         const { postId } = getRouteParams<PostsIdDto>(req.params);
 
@@ -82,7 +78,7 @@ PostsController.delete(
     "/:postId",
     validateRouteParameter(postsIdDtoSchema),
     getUserFromToken,
-    authorizeUserOrAdmin,
+    authorizeAccess(["user", "admin"]),
     async function (req, res) {
         const { postId } = getRouteParams<PostsIdDto>(req.params);
 
