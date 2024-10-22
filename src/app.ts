@@ -11,6 +11,7 @@ import { db } from "database/data-source";
 import { AuthController } from "modules/auth/auth.controller";
 import { PostsController } from "modules/posts/posts.controller";
 import { CommentsController } from "modules/comments/comments.controller";
+import { UsersController } from "modules/users/users.controller";
 
 export const app = express();
 
@@ -34,6 +35,7 @@ app.get("/", async (_req: Request, res: Response) => {
 app.use("/auth", AuthController);
 app.use("/blogs", PostsController);
 app.use("/comments", CommentsController);
+app.use("/users", UsersController);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware as ErrorRequestHandler);
