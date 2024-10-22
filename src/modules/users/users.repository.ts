@@ -18,11 +18,11 @@ export class UsersRepository {
             [id, username, email, password, role]
         );
 
-        if (!result[0]) {
+        if (!result[0] || !result[0][0]) {
             throw new DatabaseError("Errors connecting to the database");
         }
 
-        return result[0];
+        return result[0][0];
     }
 
     static async getUser(
@@ -42,5 +42,26 @@ export class UsersRepository {
         }
 
         return result[0];
+    }
+
+    static async changeUserRole(
+        userId: string,
+        role: "admin" | "user"
+    ): Promise<User> {
+        const result = await db.manager.query(
+            `
+            UPDATE users
+            SET role = $2
+            WHERE id = $1
+            RETURNING *
+            `,
+            [userId, role]
+        );
+
+        if (!result[0] || !result[0][0]) {
+            throw new DatabaseError("Errors connecting to the database");
+        }
+
+        return result[0][0];
     }
 }

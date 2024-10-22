@@ -15,6 +15,12 @@ export class UsersService {
         return UsersRepository.createUser(userCredentials);
     }
 
+    static async changeUserRole(userId: string, role: "admin" | "user") {
+        const user = await UsersService.getUserById(userId);
+
+        return UsersRepository.changeUserRole(user.id, role);
+    }
+
     static async getUserIfExists(email: string) {
         try {
             return await UsersRepository.getUser(email, "email");
