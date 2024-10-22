@@ -9,11 +9,7 @@ import {
     validateRequestBody,
     validateRouteParameter
 } from "shared/validators";
-import {
-    authorizeUser,
-    authorizeUserOrAdmin,
-    getUserFromToken
-} from "shared/middlewares";
+import { authorizeAccess, getUserFromToken } from "shared/middlewares";
 import { CommentsService } from "./comments.service";
 import { StatusCode } from "shared/constants";
 
@@ -24,7 +20,7 @@ CommentsController.patch(
     validateRouteParameter(commentsIdDtoSchema),
     validateRequestBody(commentsCreateDtoSchema),
     getUserFromToken,
-    authorizeUser,
+    authorizeAccess(["user"]),
     async function (req, res) {
         const { commentId } = getRouteParams<CommentsIdDto>(req.params);
 
@@ -44,7 +40,7 @@ CommentsController.delete(
     "/:commentId",
     validateRouteParameter(commentsIdDtoSchema),
     getUserFromToken,
-    authorizeUserOrAdmin,
+    authorizeAccess(["user", "admin"]),
     async function (req, res) {
         const { commentId } = getRouteParams<CommentsIdDto>(req.params);
 
