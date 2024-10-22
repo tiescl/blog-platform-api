@@ -25,20 +25,17 @@ export function authorizeAccess(roles: ("user" | "admin")[]) {
         const user = await UsersService.getUserById(res.locals.userId);
 
         try {
-            // @ts-expect-error this should in no cases fail
-            if (roles.includes("user") && user.id != entity[field]) {
+            if (
+                // @ts-expect-error this should in no cases fail
+                (roles.includes("user") && user.id == entity[field]) ||
+                (roles.includes("admin") && user.role == "admin")
+            ) {
+                next();
+            } else {
                 throw new AuthorizationError(
                     "You are not authorized to perform this action"
                 );
             }
-
-            if (roles.includes("admin") && user.role != "admin") {
-                throw new AuthorizationError(
-                    "You are not authorized to perform this action"
-                );
-            }
-
-            next();
         } catch (err) {
             next(err);
         }
