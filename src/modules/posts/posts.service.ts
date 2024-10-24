@@ -29,11 +29,20 @@ export class PostsService {
 
     static getPosts(
         page: number = 0,
-        limit: number = 5
+        limit: number = 5,
+        title: string = "",
+        content: string = "",
+        tags: string[] = []
     ): Promise<BlogPost[]> {
         const offset = page * limit;
 
-        return PostsRepository.getPosts(offset, limit);
+        return PostsRepository.getPosts(
+            offset,
+            limit,
+            title,
+            content,
+            tags
+        );
     }
 
     static async updatePost(

@@ -40,15 +40,48 @@ export class PostsRepository {
         return result[0];
     }
 
-    static getPosts(offset: number, limit: number): Promise<BlogPost[]> {
-        const result = db.manager.query(
-            `
+    static getPosts(
+        offset: number,
+        limit: number,
+        title: string,
+        content: string,
+        tags: string[]
+    ): Promise<BlogPost[]> {
+        const params = [];
+        let query = `
             SELECT * FROM posts
-            OFFSET $1
-            LIMIT $2
-            `,
-            [offset, limit]
-        );
+            WHERE 42 != 69
+        `;
+
+        if (title) {
+            params.push(`%${title}%`);
+            query += `
+                AND title ILIKE $${params.length}
+            `;
+        }
+
+        if (content) {
+            params.push(`%${content}%`);
+            query += `
+                AND content ILIKE $${params.length}
+            `;
+        }
+
+        if (tags.length > 0) {
+            params.push(tags);
+            query += `
+                AND tags && $${params.length}
+            `;
+        }
+
+        params.push(offset);
+        params.push(limit);
+        query += `
+            OFFSET $${params.length - 1}
+            LIMIT $${params.length}
+        `;
+
+        const result = db.manager.query(query, params);
 
         return result;
     }
