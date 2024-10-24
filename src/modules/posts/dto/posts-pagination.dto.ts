@@ -10,6 +10,14 @@ export const postsPaginationDtoSchema = z.object({
         .string()
         .transform((str) => Number(str))
         .pipe(z.number().int().positive().max(100))
+        .optional(),
+    title: z.string().toLowerCase().trim().min(2).max(255).optional(),
+    content: z.string().toLowerCase().trim().min(2).max(255).optional(),
+    tags: z
+        .string()
+        .min(1)
+        .transform((tags) => tags.split(",").map((tag) => tag.trim()))
+        .pipe(z.array(z.string().min(1).max(100)).min(1).max(100))
         .optional()
 });
 
