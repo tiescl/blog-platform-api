@@ -95,11 +95,16 @@ PostsController.get(
     "/",
     validateQueryParams(postsPaginationDtoSchema),
     async function (req, res) {
-        const { page, limit } = getSearchParams<PostsPaginationDto>(
-            req.query
-        );
+        const { page, limit, title, content, tags } =
+            getSearchParams<PostsPaginationDto>(req.query);
 
-        const posts = await PostsService.getPosts(page, limit);
+        const posts = await PostsService.getPosts(
+            page,
+            limit,
+            title,
+            content,
+            tags
+        );
 
         res.status(StatusCode.Ok).json({
             message: "Posts fetched successfully",
