@@ -56,6 +56,18 @@ class DbClient {
             EXECUTE FUNCTION update_modified_column();
         `;
 
+        const INDEX_POSTS_TITLE = `
+            CREATE INDEX IF NOT EXISTS title_index ON posts (title);
+        `;
+
+        const INDEX_POSTS_CONTENT = `
+            CREATE INDEX IF NOT EXISTS content_index ON posts USING GIN (to_tsvector('english', content));
+        `;
+
+        const INDEX_POSTS_TAGS = `
+            CREATE INDEX IF NOT EXISTS tags_index ON posts USING GIN (tags);
+        `;
+
         const CREATE_POST_TABLE_QUERY = `
             CREATE TABLE IF NOT EXISTS posts (
                 id UUID PRIMARY KEY,
@@ -80,12 +92,17 @@ class DbClient {
         `;
 
         try {
-            await queryRunner.query(UPDATE_MODIFIED_FUNCTION);
-            await queryRunner.query(CREATE_USER_TABLE_QUERY);
-            await queryRunner.query(CREATE_POST_TABLE_QUERY);
-            await queryRunner.query(CREATE_COMMENT_TABLE_QUERY);
-            await queryRunner.query(UPDATE_MODIFIED_TRIGGER_POSTS);
-            await queryRunner.query(UPDATE_MODIFIED_TRIGGER_COMMENTS);
+            await Promise.all([
+                queryRunner.query(UPDATE_MODIFIED_FUNCTION),
+                queryRunner.query(CREATE_USER_TABLE_QUERY),
+                queryRunner.query(CREATE_POST_TABLE_QUERY),
+                queryRunner.query(CREATE_COMMENT_TABLE_QUERY),
+                queryRunner.query(UPDATE_MODIFIED_TRIGGER_POSTS),
+                queryRunner.query(UPDATE_MODIFIED_TRIGGER_COMMENTS),
+                queryRunner.query(INDEX_POSTS_TITLE),
+                queryRunner.query(INDEX_POSTS_CONTENT),
+                queryRunner.query(INDEX_POSTS_TAGS)
+            ]);
         } catch (error) {
             throw new DatabaseError(`Table creation failed: ${error}`);
         } finally {
