@@ -68,6 +68,13 @@ class DbClient {
             CREATE INDEX IF NOT EXISTS tags_index ON posts USING GIN (tags);
         `;
 
+        const UPDATE_MODIFIED_TRIGGER_BLOG_LIKES = `
+            CREATE OR REPLACE TRIGGER update_blog_like_modtime
+            BEFORE UPDATE ON blog_likes
+            FOR EACH ROW
+            EXECUTE FUNCTION update_modified_column();
+        `;
+
         const CREATE_POST_TABLE_QUERY = `
             CREATE TABLE IF NOT EXISTS posts (
                 id UUID PRIMARY KEY,
@@ -91,14 +98,27 @@ class DbClient {
             )
         `;
 
+        const CREATE_BLOG_LIKE_TABLE_QUERY = `
+            CREATE TABLE IF NOT EXISTS blog_likes (
+                post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+                user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+                liked BOOLEAN NOT NULL DEFAULT TRUE,
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (post_id, user_id)
+            )
+        `;
+
         try {
             await Promise.all([
                 queryRunner.query(UPDATE_MODIFIED_FUNCTION),
                 queryRunner.query(CREATE_USER_TABLE_QUERY),
                 queryRunner.query(CREATE_POST_TABLE_QUERY),
                 queryRunner.query(CREATE_COMMENT_TABLE_QUERY),
+                queryRunner.query(CREATE_BLOG_LIKE_TABLE_QUERY),
                 queryRunner.query(UPDATE_MODIFIED_TRIGGER_POSTS),
                 queryRunner.query(UPDATE_MODIFIED_TRIGGER_COMMENTS),
+                queryRunner.query(UPDATE_MODIFIED_TRIGGER_BLOG_LIKES),
                 queryRunner.query(INDEX_POSTS_TITLE),
                 queryRunner.query(INDEX_POSTS_CONTENT),
                 queryRunner.query(INDEX_POSTS_TAGS)
