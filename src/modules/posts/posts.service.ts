@@ -4,6 +4,8 @@ import { PostsRepository } from "./posts.repository";
 import { PostsCreateDto, PostsUpdateDto } from "./dto";
 import { BlogPost, Comment } from "shared/entities";
 import { v4 as uuid } from "uuid";
+import { BlogPostLike } from "shared/entities/BlogPostLike.entity";
+import { NotFoundError } from "shared/errors";
 
 export class PostsService {
     static async createPost(
@@ -66,5 +68,35 @@ export class PostsService {
 
     static async getPostComments(postId: string): Promise<Comment[]> {
         return CommentsService.getCommentsByPostId(postId);
+    }
+
+    static async toggleLike(postId: string, userId: string) {
+        const existingLike = await PostsService.getPostLikeIfExists(
+            postId,
+            userId
+        );
+
+        if (!existingLike) {
+            await PostsRepository.createPostLike(postId, userId);
+        } else {
+            await PostsRepository.togglePostLike(postId, userId);
+        }
+
+        return PostsRepository.getPostLikeCount(postId);
+    }
+
+    static async getPostLikeIfExists(
+        postId: string,
+        userId: string
+    ): Promise<BlogPostLike | null> {
+        try {
+            return await PostsRepository.getPostLike(postId, userId);
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                return null;
+            } else {
+                throw error;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ import { PostsCreateDto } from "./dto";
 import { db } from "database/data-source";
 import { DatabaseError, NotFoundError } from "shared/errors";
 import { PostsUpdateDto } from "./dto/posts-update.dto";
+import { BlogPostLike } from "shared/entities/BlogPostLike.entity";
 
 export class PostsRepository {
     static async createPost(post: PostsCreateDto): Promise<BlogPost> {
@@ -125,5 +126,84 @@ export class PostsRepository {
         }
 
         return result[0][0];
+    }
+
+    static async getPostLike(
+        postId: string,
+        userId: string
+    ): Promise<BlogPostLike> {
+        const result = await db.manager.query(
+            `
+            SELECT * FROM blog_likes
+            WHERE post_id = $1 AND user_id = $2
+            `,
+            [postId, userId]
+        );
+
+        if (!result[0]) {
+            throw new NotFoundError(
+                `Like for Post ${postId} does not exist`
+            );
+        }
+
+        return result[0];
+    }
+
+    static async createPostLike(postId: string, userId: string) {
+        const result = await db.manager.query(
+            `
+            INSERT INTO blog_likes
+                (post_id, user_id)
+            VALUES
+                ($1, $2)
+            RETURNING *
+            `,
+            [postId, userId]
+        );
+
+        if (!result[0]) {
+            throw new DatabaseError("Errors connecting to the database");
+        }
+
+        return result[0];
+    }
+
+    static async togglePostLike(postId: string, userId: string) {
+        const result = await db.manager.query(
+            `
+            UPDATE blog_likes
+            SET liked = NOT liked
+            WHERE post_id = $1 AND user_id = $2
+            RETURNING *
+            `,
+            [postId, userId]
+        );
+
+        if (!result[0] || !result[0][0]) {
+            throw new DatabaseError("Errors connecting to the database");
+        }
+
+        return result[0][0];
+    }
+
+    static async getPostLikeCount(postId: string) {
+        await db.manager.query(
+            "REFRESH MATERIALIZED VIEW blog_like_counts"
+        );
+
+        const result = await db.manager.query(
+            `
+            SELECT like_count
+            FROM blog_like_counts
+            WHERE post_id = $1
+            `,
+            [postId]
+        );
+
+        if (!result[0]) {
+            return { like_count: "0" };
+        }
+
+        return result[0];
     }
 }

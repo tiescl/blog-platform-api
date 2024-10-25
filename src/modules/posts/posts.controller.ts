@@ -148,3 +148,22 @@ PostsController.post(
         });
     }
 );
+
+PostsController.patch(
+    "/:postId/like",
+    validateRouteParameter(postsIdDtoSchema),
+    getUserFromToken,
+    async function (req, res) {
+        const { postId } = getRouteParams<PostsIdDto>(req.params);
+
+        const like = await PostsService.toggleLike(
+            postId,
+            res.locals.userId
+        );
+
+        res.status(StatusCode.Ok).json({
+            message: `Post [${postId}] liked/disliked successfully`,
+            likeCount: like.like_count
+        });
+    }
+);
