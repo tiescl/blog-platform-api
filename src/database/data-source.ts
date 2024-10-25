@@ -109,6 +109,14 @@ class DbClient {
             )
         `;
 
+        const CREATE_BLOG_LIKE_COUNT_VIEW = `
+            CREATE MATERIALIZED VIEW IF NOT EXISTS blog_like_counts AS
+            SELECT post_id, COUNT(*) AS like_count
+            FROM blog_likes
+            WHERE liked = TRUE
+            GROUP BY post_id;
+        `;
+
         try {
             await Promise.all([
                 queryRunner.query(UPDATE_MODIFIED_FUNCTION),
@@ -116,6 +124,7 @@ class DbClient {
                 queryRunner.query(CREATE_POST_TABLE_QUERY),
                 queryRunner.query(CREATE_COMMENT_TABLE_QUERY),
                 queryRunner.query(CREATE_BLOG_LIKE_TABLE_QUERY),
+                queryRunner.query(CREATE_BLOG_LIKE_COUNT_VIEW),
                 queryRunner.query(UPDATE_MODIFIED_TRIGGER_POSTS),
                 queryRunner.query(UPDATE_MODIFIED_TRIGGER_COMMENTS),
                 queryRunner.query(UPDATE_MODIFIED_TRIGGER_BLOG_LIKES),
