@@ -18,11 +18,11 @@ export class UsersRepository {
             [id, username, email, password, role]
         );
 
-        if (!result[0] || !result[0][0]) {
+        if (!result[0]) {
             throw new DatabaseError("Errors connecting to the database");
         }
 
-        return result[0][0];
+        return result[0];
     }
 
     static async getUser(
