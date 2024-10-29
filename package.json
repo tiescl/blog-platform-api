@@ -5,6 +5,8 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
+        "start": "node build/main.js",
+        "build": "tsc",
         "dev": "nodemon --watch src --ext ts --exec tsx src/main.ts",
         "test": "jest",
         "typecheck": "tsc --noEmit",
