@@ -5,5 +5,5 @@ export default {
     transform: {
         "^.+.tsx?$": ["@swc/jest"]
     },
-    testPathIgnorePatterns: ["./src/__tests__/repoMocks.ts"]
+    testPathIgnorePatterns: ["./src/__tests__/repoMocks.ts", "./build"]
 };

@@ -6,7 +6,7 @@
     "type": "module",
     "scripts": {
         "start": "node build/main.js",
-        "build": "tsc",
+        "build": "tsc && tsc-alias",
         "dev": "nodemon --watch src --ext ts --exec tsx src/main.ts",
         "test": "jest",
         "typecheck": "tsc --noEmit",
@@ -48,6 +48,7 @@
         "prettier": "^3.3.3",
         "supertest": "^7.0.0",
         "ts-jest": "^29.2.5",
+        "tsc-alias": "^1.8.10",
         "tsx": "^4.19.1",
         "typescript": "^5.5.4",
         "typescript-eslint": "^8.8.0"
