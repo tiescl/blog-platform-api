@@ -11,6 +11,34 @@ import { StatusCode } from "shared/constants";
 
 export const UsersController = Router();
 
+UsersController.get(
+    "/profile",
+    getUserFromToken,
+    async function (_req, res) {
+        const user = await UsersService.getUserById(res.locals.userId);
+
+        res.status(StatusCode.Ok).json({
+            message: `User ${user.id} fetched successfully`,
+            user: user
+        });
+    }
+);
+
+UsersController.get(
+    "/:userId",
+    validateRouteParameter(usersIdDtoSchema),
+    getUserFromToken,
+    authorizeAccess(["admin"]),
+    async function (_req, res) {
+        const user = res.locals.user;
+
+        res.status(StatusCode.Ok).json({
+            message: `User profile ${user.id} fetched successfully`,
+            user: user
+        });
+    }
+);
+
 UsersController.patch(
     "/:userId/role",
     validateRouteParameter(usersIdDtoSchema),
