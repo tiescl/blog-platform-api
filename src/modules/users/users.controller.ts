@@ -88,7 +88,7 @@ UsersController.patch(
         const { userId } = getRouteParams<UsersIdDto>(req.params);
 
         const userWithUpdatedRole = await UsersService.changeUserRole(
-            userId,
+            res.locals.user,
             req.body
         );
 
