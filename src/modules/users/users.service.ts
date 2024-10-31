@@ -1,4 +1,6 @@
+import { AuthService } from "modules/auth/auth.service";
 import { UsersRoleDto } from "./dto";
+import { UsersUpdateDto } from "./dto/users-update.dto";
 import { UsersRepository } from "./users.repository";
 import { UsersCreateDto } from "./users.types";
 import { BadRequestError } from "shared/errors";
@@ -14,6 +16,12 @@ export class UsersService {
         }
 
         return UsersRepository.createUser(userCredentials);
+    }
+
+    static async updateUser(userId: string, user: UsersUpdateDto) {
+        user.password &&= await AuthService.hashPassword(user.password);
+
+        return UsersRepository.updateUser(userId, user);
     }
 
     static async changeUserRole(userId: string, { role }: UsersRoleDto) {
