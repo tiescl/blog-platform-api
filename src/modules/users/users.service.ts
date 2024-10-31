@@ -1,3 +1,4 @@
+import { UsersRoleDto } from "./dto";
 import { UsersRepository } from "./users.repository";
 import { UsersCreateDto } from "./users.types";
 import { BadRequestError } from "shared/errors";
@@ -15,7 +16,7 @@ export class UsersService {
         return UsersRepository.createUser(userCredentials);
     }
 
-    static async changeUserRole(userId: string, role: "admin" | "user") {
+    static async changeUserRole(userId: string, { role }: UsersRoleDto) {
         const user = await UsersService.getUserById(userId);
 
         return UsersRepository.changeUserRole(user.id, role);

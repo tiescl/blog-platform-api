@@ -1,48 +1,36 @@
 import { Router } from "express";
 import { UsersService } from "./users.service";
 import { authorizeAccess, getUserFromToken } from "shared/middlewares";
-import { getRouteParams, validateRouteParameter } from "shared/validators";
-import { UsersIdDto, usersIdDtoSchema } from "./dto";
+import {
+    getRouteParams,
+    validateRouteParameter,
+    validateRequestBody
+} from "shared/validators";
+import { UsersIdDto, usersIdDtoSchema, usersRoleDtoSchema } from "./dto";
 import { StatusCode } from "shared/constants";
 
 export const UsersController = Router();
 
 UsersController.patch(
-    "/:userId/promote",
+    "/:userId/role",
     validateRouteParameter(usersIdDtoSchema),
+    validateRequestBody(usersRoleDtoSchema),
     getUserFromToken,
     authorizeAccess(["admin"]),
     async function (req, res) {
         const { userId } = getRouteParams<UsersIdDto>(req.params);
 
-        const promotedUser = await UsersService.changeUserRole(
+        const userWithUpdatedRole = await UsersService.changeUserRole(
             userId,
-            "admin"
+            req.body
         );
 
         res.status(StatusCode.Ok).json({
-            message: `User ${userId} promoted successfully`,
-            user: promotedUser
-        });
-    }
-);
-
-UsersController.patch(
-    "/:userId/demote",
-    validateRouteParameter(usersIdDtoSchema),
-    getUserFromToken,
-    authorizeAccess(["admin"]),
-    async function (req, res) {
-        const { userId } = getRouteParams<UsersIdDto>(req.params);
-
-        const demotedUser = await UsersService.changeUserRole(
-            userId,
-            "user"
-        );
-
-        res.status(StatusCode.Ok).json({
-            message: `User ${userId} demoted successfully`,
-            user: demotedUser
+            message:
+                `User ${userId} ` +
+                (req.body.role == "admin" ? "promoted " : "demoted ") +
+                "successfully",
+            user: userWithUpdatedRole
         });
     }
 );
