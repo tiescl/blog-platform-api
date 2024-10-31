@@ -58,6 +58,15 @@ export const mockPosts = new Array(10)
         };
     });
 
+export const newCompleteAdminUser: User = {
+    id: uuid(),
+    username: "qwerty-dvorak",
+    email: "qwerty@example.com",
+    password: "qwerty123",
+    role: "admin",
+    created_at: new Date()
+};
+
 export const newCompleteUser: User = {
     id: uuid(),
     username: "qwerty-dvorak",
@@ -76,7 +85,35 @@ export async function signupUser(
         new Error("error indicating the user does not exist")
     );
 
-    mockUsersRepository.createUser.mockResolvedValueOnce(newCompleteUser);
+    mockUsersRepository.createUser.mockImplementationOnce((dto) => {
+        return Promise.resolve({
+            ...dto,
+            created_at: new Date()
+        });
+    });
+
+    const signupRes = await request(app)
+        .post("/auth/signup")
+        .send(mockUser);
+
+    expect(signupRes.body.token).toBeDefined();
+    expect(signupRes.body.user).toBeDefined();
+
+    return signupRes.body;
+}
+
+export async function signupAdminUser(
+    request: SuperTestStatic,
+    app: Express,
+    mockUsersRepository: TMockUserRepo
+) {
+    mockUsersRepository.getUser.mockRejectedValueOnce(
+        new Error("error indicating the user does not exist")
+    );
+
+    mockUsersRepository.createUser.mockResolvedValueOnce(
+        newCompleteAdminUser
+    );
 
     const signupRes = await request(app)
         .post("/auth/signup")
