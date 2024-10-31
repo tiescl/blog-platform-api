@@ -4,6 +4,7 @@ import { UsersUpdateDto } from "./dto/users-update.dto";
 import { UsersRepository } from "./users.repository";
 import { UsersCreateDto } from "./users.types";
 import { BadRequestError } from "shared/errors";
+import { User } from "shared/entities";
 
 export class UsersService {
     static async createUser(userCredentials: UsersCreateDto) {
@@ -24,9 +25,7 @@ export class UsersService {
         return UsersRepository.updateUser(userId, user);
     }
 
-    static async changeUserRole(userId: string, { role }: UsersRoleDto) {
-        const user = await UsersService.getUserById(userId);
-
+    static async changeUserRole(user: User, { role }: UsersRoleDto) {
         return UsersRepository.changeUserRole(user.id, role);
     }
 
