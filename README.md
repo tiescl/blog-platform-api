@@ -37,3 +37,7 @@ docker compose up --build
 ```zsh
 docker compose down --volumes
 ```
+
+## Public API
+
+Currently available at `3.91.6.110`
