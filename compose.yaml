@@ -19,6 +19,7 @@ services:
     app:
         build:
             context: .
+        restart: unless-stopped
         develop:
             watch:
                 - action: sync+restart
